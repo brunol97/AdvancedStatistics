@@ -16,7 +16,17 @@ glimpse(dataset)
 summary(dataset)
 print("hello")
 print("omg")
-print("qualcosa")
+print("fuck")
+print("qualcosalovuoifarepermetiprego")
+
+#import the data
+library(readr)
+student_por <- read_delim("student-por.csv", 
+    delim = ";", escape_double = FALSE, trim_ws = TRUE)
+View(student_por)
+
+
+>>>>>>> def951a06a89e430c5cb5d5dbab6b2f6f52418b3
 ```
 
 Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
