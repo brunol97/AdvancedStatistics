@@ -15,9 +15,7 @@ glimpse(dataset)
 ```{r}
 summary(dataset)
 print("hello")
-=======
 print("omg")
->>>>>>> abe9dbf11943b40db1fb98c03121ab331c444263
 print("qualcosa")
 ```
 
