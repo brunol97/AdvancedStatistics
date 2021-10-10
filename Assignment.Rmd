@@ -2,7 +2,7 @@
 title: "Assignment"
 output: html_notebook
 ---
-
+print("ciaoo")
 
 ```{r Library and data imports}
 #Libraries
