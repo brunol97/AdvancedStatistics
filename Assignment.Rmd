@@ -7,6 +7,20 @@ output: html_notebook
 ```{r Library and data imports}
 #Libraries
 library(dplyr)
+<<<<<<< HEAD
+=======
+dataset = read.csv("student-por.csv", sep = ";", header = TRUE)
+glimpse(dataset)
+```
+```{r}
+summary(dataset)
+print("hello")
+print("omg")
+print("fuck")
+print("qualcosalovuoifarepermetiprego") 
+
+#import the data
+>>>>>>> fbb042b90305af81f87c1100b0d7d61eac565794
 library(readr)
 library(tidyverse)
 
