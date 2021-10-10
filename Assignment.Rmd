@@ -15,6 +15,7 @@ glimpse(dataset)
 ```{r}
 summary(dataset)
 print("hello")
+print("brunosalvaci")
 ```
 
 Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
