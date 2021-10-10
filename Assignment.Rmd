@@ -3,34 +3,26 @@ title: "Assignment"
 output: html_notebook
 ---
 
-This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
 
-Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
-
-```{r}
+```{r Library and data imports}
+#Libraries
 library(dplyr)
-dataset = read.csv("student-por.csv", sep = ";", header = TRUE)
-glimpse(dataset)
-```
-```{r}
-summary(dataset)
-print("hello")
-print("omg")
-print("fuck")
-print("qualcosalovuoifarepermetiprego")
-
-#import the data
 library(readr)
-student_por <- read_delim("student-por.csv", 
-    delim = ";", escape_double = FALSE, trim_ws = TRUE)
-View(student_por)
+library(tidyverse)
 
+#Dataset
+dataset = read.csv("student-por.csv", sep = ";", header = TRUE)
 
->>>>>>> def951a06a89e430c5cb5d5dbab6b2f6f52418b3
+```
+```{r Explore data}
+summary(dataset)
+glimpse(dataset)
+
+```
+```{r Linear Regression}
+
+model <- lm(G3 ~ . - G1 - G2,
+             data = dataset)
+summary(model)
 ```
 
-Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
-
-When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
-
-The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
