@@ -27,4 +27,10 @@ model <- lm(G3 ~ . - G1 - G2,
              data = dataset)
 summary(model)
 ```
+```{r Graph}
+plot(G3 ~ age , data=dataset,
+   xlab="Age", ylab="Score",
+   main="Enhanced Scatter Plot"
+   )
+```
 

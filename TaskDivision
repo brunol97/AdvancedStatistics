@@ -1,0 +1,16 @@
+Summary 1 page
+
+Describing the variables(Steal the original table)
+
+Think of suitable graphs
+G3 and Age, stacked bar plot and split sex (M and F)
+Linear regression model using all variables except G1 and G2(G3 is outcome)
+
+Interpret results and assess predictive performance
+
+Then for predicitive performance do train/test split(90%/10%?)
+Only use the variables that are statistically significant from the original regression. Plot the residuals in a histogram(Fabiana knows how this works)
+
+
+
+
