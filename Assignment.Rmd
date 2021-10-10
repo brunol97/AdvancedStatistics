@@ -18,6 +18,7 @@ dataset = read.csv("student-por.csv", sep = ";", header = TRUE)
 ```{r Explore data}
 summary(dataset)
 glimpse(dataset)
+print("fabi")
 
 ```
 ```{r Linear Regression}
