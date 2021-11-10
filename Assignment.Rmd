@@ -1,33 +1,94 @@
 ---
-title: "Assignment"
-output: html_notebook
+title: "Advanced Statistics Assignment"
+author: "Bruno Lenderink, Fabiana Caccavale, Marco Amadori, Lisa Aita"
+date: "November 10, 2021"
+output:
+  pdf_document: default
 ---
-print("ciaoo")
 
-```{r Library and data imports}
+# temporary description of project
+
+Import then into R the attached data. 
+
+Provide descriptives of relevant variables and associations in the data. 
+Select then G3 as your target variable, and provide a linear regression model to predict it. Do not use G1 or G2 as potential predictors. 
+Interpret the results of your final model, and assess its predictive performance. 
+Your deliverables are a 2-3 page report (not counting tables and figures), and a replication package in the form of data and 
+a text file with R code that I can copy and paste to reproduce your analysis. 
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message=FALSE, warning=FALSE)
+
+```
+
+
+
+#To remove all the objects that are stored in your global environment (but not remove any of loaded packages):
+
+```{r, include=FALSE}
+if(!is.null(dev.list())) dev.off()
+cat("\014") 
+rm(list = ls())
+```
+
+#Packages
+#To put all packages (that were previously installed) into memory:
+
+
+
+
+```{r Library and data imports,include=FALSE, echo=FALSE, warning=FALSE, message=FALSE}
 #Libraries
+library(stargazer)
 library(dplyr)
-
+library(knitr)
 library(readr)
 library(tidyverse)
+library(MASS)
 
 #Dataset
 dataset = read.csv("student-por.csv", sep = ";", header = TRUE)
+#Check for missing values
+sum(is.na(dataset))
+```
+
+```{r Explore data, results = "asis"}
+
+stargazer(dataset, header=FALSE, type='latex', title="Descriptive statistics")
+
 
 ```
-```{r Explore data}
-summary(dataset)
-glimpse(dataset)
-print("fabi")
+```{r Preparing data}
 
 ```
-```{r Linear Regression}
 
-model <- lm(G3 ~ . - G1 - G2,
+```{r Linear Regression, , include=FALSE}
+#First we simply run a linear regression of G3 on all variables except G1 and G2
+model <- lm(G3 ~ . - G1 - G2 ,
              data = dataset)
-summary(model)
+
+
+modAIC=stepAIC(lm(G3 ~ . - G1 - G2,
+             data = dataset),direction="both")
+
 ```
-```{r Graph}
+```{r Linear Regression results, results='asis',echo=FALSE}
+
+stargazer(model, header=FALSE, single.row = TRUE, title='Regression results using all variables')
+stargazer(modAIC, header=FALSE, single.row = TRUE, title="Regression results using AIC")
+```
+```{r Train test split, results='asis'}
+w <- sample(nrow(dataset), nrow(dataset)*0.8)
+trainmodel <- lm(G3 ~ school + sex + age + Medu + guardian + studytime + failures + 
+    schoolsup + higher + romantic + Dalc + health + absences, data=dataset[w,])
+stargazer(trainmodel, header=FALSE, single.row = TRUE, title="Regression model using AIC selected variables on only training data")
+pr.test=predict(trainmodel,newdata=dataset[-w,])
+print(mean((dataset$G3[-w]-pr.test)^2))
+
+
+```
+
+```{r Graph, fig.show='hide'}
 plot(G3 ~ age , data=dataset,
    xlab="Age", ylab="Score",
    main="Enhanced Scatter Plot"
