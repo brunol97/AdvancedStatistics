@@ -1,0 +1,75 @@
+#Libraries
+library(stargazer)
+library(dplyr)
+library(knitr)
+library(readr)
+library(tidyverse)
+library(MASS)
+library(magrittr)
+
+#Dataset
+dataset = read.csv("student-por.csv", sep = ";", header = TRUE)
+
+dataset %<>% mutate(across(where(is.character), as.factor))
+
+
+Y = dataset$G3
+X = dataset[,-c(31,32,33)]
+
+#check for correlation
+#numerical variables
+num_variables = select_if(X, is.numeric)
+cor(num_variables, Y, method = "spearman")
+
+cor_matr <- cor(num_variables, method = "spearman")
+cor_matr
+library(corrplot)
+corrplot(cor_matr, type = "upper", order = "hclust",
+         tl.col = "black", tl.srt = 45)
+
+
+#check for normality
+#through histograms
+hist(Y)
+w = which(Y<=1)
+hist(Y[-w], freq = FALSE, main = "Density curve")
+lines(density(Y), lwd = 2, col = 'red')
+
+#through qq plot
+pval_shapiro <- shapiro.test(Y[-w])$p.value %>% round(5) 
+qqnorm(scale(Y[-w]), pch = 20)
+abline(0, 1, lwd = 3, lty = 2, col = "red")
+text(1, -1, labels = paste("Normality Test (p) = ", pval_shapiro))
+
+#linear model
+Y = Y[-w]
+X = X[-w,]
+mod = lm(Y ~ ., data=X)
+
+best_mod = stepAIC(lm(Y ~ ., data=X))
+
+summary(best_mod)
+
+#prediction
+set.seed(19)
+tr = sample(nrow(X), nrow(X)*0.8)
+trainmodel <- lm(Y[tr] ~ school + sex + age + Medu + Fjob + guardian + 
+                   studytime + failures + schoolsup + paid + activities + higher + 
+                   famrel + goout + Dalc + health + absences, data = X[tr,])
+summary(trainmodel)
+
+pr.test = predict(trainmodel, newdata = X[-tr,])
+
+rmse <- sqrt(mean((Y[-tr] - pr.test)^2))
+rmse
+
+#homoscedasticity
+res = residuals(best_mod)
+plot(Y,res)
+
+#gaussian residuals
+hist(res)
+
+#check for collinearity 
+library(car)
+vif(best_mod)
