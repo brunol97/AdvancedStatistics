@@ -1,0 +1,63 @@
+#Libraries
+library(dplyr)
+library(readr)
+library(tidyverse)
+library(magrittr)
+library(MASS)
+#Dataset
+dataset = read.csv("student-por.csv", sep = ";", header = TRUE)
+dataset %<>% mutate(across(where(is.character), as.factor))
+
+Y = dataset$G3
+X = dataset[,-c(31,32,33)]
+
+
+########Exploratory data analysis######
+
+#Frequency of study time
+ggplot(dataset, aes(studytime)) + 
+  geom_histogram(binwidth = .25, color = "black", 
+                 fill = "purple") + 
+  xlab("Study time") +
+  ylab("Frequency")
+
+
+#Frequency of school
+barplot(table(dataset$school),
+        xlab = "School",
+        ylab = "Frequency")
+
+
+#Frequency of failures
+ggplot(dataset, aes(failures)) + 
+  geom_histogram(binwidth = .25, color = "black", 
+                 fill = "white") + 
+  xlab("Number of failures") +
+  ylab("Frequency")
+
+
+#Frequency of absences
+boxplot(dataset$absences, main = "Boxplot of absences",col = "blue")
+
+#CONTINGENCY TABLES
+prop.table(table(dataset$school,dataset$studytime), 1 )
+
+
+#correlation between numeric variables
+num_variables = select_if(X, is.numeric)
+cor(num_variables, Y, method = "spearman")
+
+cor_matr <- cor(num_variables, method = "spearman")
+cor_matr
+library(corrplot)
+corrplot(cor_matr, type = "upper", order = "hclust",
+         tl.col = "black", tl.srt = 45)
+
+
+
+# Does it look like a Poisson?
+prob <- dpois(dataset$G3, mean(dataset$G3))
+prob
+plot(dataset$G3, prob, pch = 16, col = "orange", type = "h")
+points(dataset$G3, prob, pch = 16, col = "orange", type = "p")
+
