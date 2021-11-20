@@ -41,7 +41,12 @@ boxplot(dataset$absences, main = "Boxplot of absences",col = "blue")
 
 #CONTINGENCY TABLES
 prop.table(table(dataset$school,dataset$studytime), 1 )
-
+prop.table(table(dataset$sex,dataset$failures), 1 )
+prop.table(table(dataset$schoolsup,dataset$failures), 1 )
+prop.table(table(dataset$activities,dataset$studytime), 1 )
+prop.table(table(dataset$higher,dataset$sex), 1 )
+#independence test
+chisq.test(table(dataset$higher,dataset$sex))
 
 #correlation between numeric variables
 num_variables = select_if(X, is.numeric)
@@ -61,3 +66,59 @@ prob
 plot(dataset$G3, prob, pch = 16, col = "orange", type = "h")
 points(dataset$G3, prob, pch = 16, col = "orange", type = "p")
 
+
+#####POISSON REGRESSION MODEL
+
+mod = glm(Y ~ ., data=X, family=poisson)
+summary(mod)
+
+best_mod = step(glm(Y ~ ., data=X, family=poisson))
+summary(best_mod)
+
+exp((best_mod$coefficients))
+
+
+#deviance goodness of fit
+1-pchisq(best_mod$deviance, best_mod$df.residual) #good fit
+
+#residuals analysis
+resid <- resid(best_mod, type = "pearson")
+fitted <- fitted(best_mod)
+plot(fitted, resid, main = "Pearson residuals")
+hist(resid)
+
+resid <- resid(best_mod, type = "deviance")
+fitted <- fitted(best_mod)
+plot(fitted, resid, main = "Deviance residuals")
+hist(resid)
+
+
+plot(best_mod, which = 1) # Pearson residuals
+
+##### prediction
+set.seed(23)
+tr = sample(nrow(X), nrow(X)*0.8)
+
+
+train_model <- glm(Y[tr] ~ school + sex + Fedu + studytime + failures + 
+                     schoolsup + higher + Dalc + health, data = X[tr,])
+
+summary(train_model)
+
+#RMSE on the train set
+sqrt(mean((Y[tr] - train_model$fitted.values)^2))
+
+
+pred <- predict(train_model, newdata = X[-tr,], type = "response")
+pred
+
+# RMSE on the test set
+sqrt(mean((Y[-tr] - pred)^2))
+
+#benchmark
+mod_bench = glm(Y ~ 1, data = X, family = "poisson")
+summary(mod_bench)
+pr_bench=predict(mod_bench,type="response")
+mean((pr_bench - Y)^2)
+rmse <- sqrt(mean((Y - pr_bench)^2))
+rmse
